@@ -1,7 +1,7 @@
 mod lib;
 
 use clap::{App, Arg};
-use lib::parse;
+use lib::parse::parse;
 
 const VERSION: &str = "v0.0.1";
 const APPNAME: &str = "rustdice";
@@ -13,8 +13,7 @@ fn main() {
         .version(VERSION)
         .author(AUTHOR)
         .about(ABOUT)
-        .arg(Arg::with_name("INPUT")
-             .help("input string"))
+        .arg(Arg::with_name("INPUT").help("input string"))
         .get_matches();
 
     if let Some(input) = matches.value_of("INPUT") {

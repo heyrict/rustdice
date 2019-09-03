@@ -1,2 +1,5 @@
 # Build target
 target/
+
+# vim swap files
+.*.swp
