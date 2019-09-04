@@ -33,7 +33,7 @@ impl GoDice<Vec<i32>> for Throw {
         let mut results: Vec<i32> = vec![];
         let mut rng = thread_rng();
         for _ in 0..self.times {
-            let result: i32 = rng.gen_range(1, self.faces);
+            let result: i32 = rng.gen_range(1, self.faces + 1);
             results.push(result);
         }
         results
