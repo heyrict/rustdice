@@ -236,24 +236,24 @@ pub fn parse(expression: &str) -> DiceExpr {
                     panic!("rustdice:parse_str: Unrecognized mode `{}`", mode_char);
                 }
             }
-        } else {
-            // Handling numbers
-            if c >= '0' && c <= '9' {
-                let mut s = String::new();
-                s.push(c);
-                store.push(&Identifier::Number(s));
+        }
+
+        // Handling numbers
+        if c >= '0' && c <= '9' {
+            let mut s = String::new();
+            s.push(c);
+            store.push(&Identifier::Number(s));
             // Handling chars
-            } else if vec!['<', '=', '>', '!'].contains(&c) {
-                let mut s = String::new();
-                s.push(c);
-                store.push(&Identifier::Symbol(s));
-            } else if let None = mode {
-                let upper_c = c.to_ascii_uppercase();
-                store.push(&Identifier::Mode(upper_c));
-                mode = Some(upper_c);
-            } else {
-                panic!("rustdice:parse_str: Multiple mode chars detected");
-            }
+        } else if vec!['<', '=', '>', '!'].contains(&c) {
+            let mut s = String::new();
+            s.push(c);
+            store.push(&Identifier::Symbol(s));
+        } else if let None = mode {
+            let upper_c = c.to_ascii_uppercase();
+            store.push(&Identifier::Mode(upper_c));
+            mode = Some(upper_c);
+        } else {
+            panic!("rustdice:parse_str: Multiple mode chars detected");
         }
     }
     store.flush();

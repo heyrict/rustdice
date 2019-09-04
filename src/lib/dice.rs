@@ -51,7 +51,7 @@ impl fmt::Display for CompareOp {
             f,
             "{}",
             match &self {
-                CompareOp::Equal => "=",
+                CompareOp::Equal => "==",
                 CompareOp::NotEqual => "!=",
                 CompareOp::GreaterThan => ">",
                 CompareOp::GreaterThanOrEqual => ">=",
