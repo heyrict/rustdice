@@ -248,8 +248,9 @@ pub fn parse(expression: &str) -> DiceExpr {
                 s.push(c);
                 store.push(&Identifier::Symbol(s));
             } else if let None = mode {
-                store.push(&Identifier::Mode(c.to_ascii_uppercase()));
-                mode = Some(c);
+                let upper_c = c.to_ascii_uppercase();
+                store.push(&Identifier::Mode(upper_c));
+                mode = Some(upper_c);
             } else {
                 panic!("rustdice:parse_str: Multiple mode chars detected");
             }
