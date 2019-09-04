@@ -1,4 +1,14 @@
+use rand::{seq::SliceRandom, thread_rng, Rng};
+use std::cmp::{PartialEq, PartialOrd};
 use std::fmt;
+
+pub trait GoDice<T> {
+    fn gen_result(&self) -> T;
+    fn get_result(&self, result: &T) -> String;
+    fn go(&self) -> String {
+        self.get_result(&self.gen_result())
+    }
+}
 
 /// Throw a dice with `faces` faces `times` times.
 pub struct Throw {
@@ -15,6 +25,26 @@ impl Throw {
 impl fmt::Display for Throw {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         write!(f, "{}D{}", self.times, self.faces)
+    }
+}
+
+impl GoDice<Vec<i32>> for Throw {
+    fn gen_result(&self) -> Vec<i32> {
+        let mut results: Vec<i32> = vec![];
+        let mut rng = thread_rng();
+        for _ in 0..self.times {
+            let result: i32 = rng.gen_range(1, self.faces);
+            results.push(result);
+        }
+        results
+    }
+    fn get_result(&self, result: &Vec<i32>) -> String {
+        let result_string: Vec<String> = result
+            .iter()
+            .map(|r: &i32| -> String { format!("{}", r) })
+            .collect();
+        let result_str = result_string.join(" ");
+        result_str
     }
 }
 
@@ -35,6 +65,18 @@ impl fmt::Display for Shuffle {
     }
 }
 
+impl GoDice<Vec<String>> for Shuffle {
+    fn gen_result(&self) -> Vec<String> {
+        let mut result = self.elements.clone();
+        let mut rng = thread_rng();
+        result.shuffle(&mut rng);
+        result
+    }
+    fn get_result(&self, result: &Vec<String>) -> String {
+        result.join(" ")
+    }
+}
+
 /// Comparison operations
 pub enum CompareOp {
     GreaterThan,
@@ -43,6 +85,22 @@ pub enum CompareOp {
     LessThanOrEqual,
     Equal,
     NotEqual,
+}
+
+impl CompareOp {
+    pub fn exec<T>(&self, a: T, b: T) -> bool
+    where
+        T: PartialEq + PartialOrd,
+    {
+        match &self {
+            CompareOp::Equal => a == b,
+            CompareOp::NotEqual => a != b,
+            CompareOp::GreaterThan => a > b,
+            CompareOp::GreaterThanOrEqual => a >= b,
+            CompareOp::LessThan => a < b,
+            CompareOp::LessThanOrEqual => a <= b,
+        }
+    }
 }
 
 impl fmt::Display for CompareOp {
@@ -81,6 +139,27 @@ impl fmt::Display for ThrowCompare {
     }
 }
 
+impl GoDice<Vec<i32>> for ThrowCompare {
+    fn gen_result(&self) -> Vec<i32> {
+        self.throw.gen_result()
+    }
+    fn get_result(&self, result: &Vec<i32>) -> String {
+        let throw_result = self.throw.get_result(result);
+        let compare_result: String = {
+            let pass_result: Vec<i32> = result
+                .iter()
+                .map(|value| self.op.exec(value, &self.value) as i32)
+                .collect();
+            let pass_times: i32 = pass_result.iter().sum();
+            format!("Pass {} of {}", pass_times, self.throw.times)
+        };
+        format!(
+            "{} {} {}: {}",
+            throw_result, self.op, self.value, compare_result
+        )
+    }
+}
+
 /// Modes of dice expressions.
 ///
 /// - DiceThrow: just throw a dice
@@ -88,7 +167,7 @@ impl fmt::Display for ThrowCompare {
 ///   Usage: ([times])D([faces])
 ///   - 3D6: Throw a dice with 6 faces 3 times
 ///   - D: Throw a dice with 6 faces 1 time
-///   
+///
 /// - DiceThrowCompare: throw a dice and compare with a number
 ///
 ///   Usage: ([times])D([faces])[=|<|<=|>|>=|!=|<>][number]
@@ -110,6 +189,16 @@ impl fmt::Display for DiceExpr {
             DiceExpr::DiceThrow(throw) => write!(f, "{}", throw),
             DiceExpr::DiceThrowCompare(throw_cmp) => write!(f, "{}", throw_cmp),
             DiceExpr::ElementsShuffle(shfl) => write!(f, "{}", shfl),
+        }
+    }
+}
+
+impl DiceExpr {
+    pub fn go(&self) -> String {
+        match &self {
+            DiceExpr::DiceThrow(throw) => throw.go(),
+            DiceExpr::DiceThrowCompare(throw_cmp) => throw_cmp.go(),
+            DiceExpr::ElementsShuffle(shfl) => shfl.go(),
         }
     }
 }

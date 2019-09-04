@@ -136,16 +136,24 @@ impl ParsedIdentifers {
                 Identifier::Number(s) => {
                     let number: i32 = s.parse().unwrap();
                     if let None = times {
+                        // Before mode
                         if let None = mode {
-                            times = Some(number);
-                            continue;
+                            // Before op
+                            if let None = op {
+                                times = Some(number);
+                                continue;
+                            }
                         }
                     }
                     if let None = faces {
-                        faces = Some(number);
-                        continue;
+                        // Before op
+                        if let None = op {
+                            faces = Some(number);
+                            continue;
+                        }
                     }
                     if let None = value {
+                        // After op
                         if let Some(_) = op {
                             value = Some(number);
                             break; // No more values expected
@@ -243,7 +251,7 @@ pub fn parse(expression: &str) -> DiceExpr {
             let mut s = String::new();
             s.push(c);
             store.push(&Identifier::Number(s));
-            // Handling chars
+        // Handling chars
         } else if vec!['<', '=', '>', '!'].contains(&c) {
             let mut s = String::new();
             s.push(c);
