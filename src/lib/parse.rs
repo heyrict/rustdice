@@ -7,6 +7,7 @@ enum Identifier {
     Number(String),
     Mode(char),
     Symbol(String),
+    Delimiter,
 }
 
 struct ParsedIdentifers {
@@ -35,6 +36,7 @@ impl ParsedIdentifers {
                     self.flush();
                     self.cache = new_cache;
                 };
+
                 match cached_ident {
                     // If cached identifier is a number
                     Identifier::Number(prev_string) => {
@@ -50,6 +52,7 @@ impl ParsedIdentifers {
                             Identifier::Symbol(pushed_string) => {
                                 flush_with(Some(Identifier::Symbol(pushed_string)))
                             }
+                            Identifier::Delimiter => flush_with(None),
                         }
                     }
                     // If cached identifier is a mode
@@ -70,6 +73,7 @@ impl ParsedIdentifers {
                             Identifier::Symbol(pushed_string) => {
                                 flush_with(Some(Identifier::Symbol(pushed_string)))
                             }
+                            Identifier::Delimiter => flush_with(None),
                         }
                     }
                     // If cached identifier is a symbol
@@ -86,17 +90,22 @@ impl ParsedIdentifers {
                                 flush_with(Some(Identifier::Number(pushed_string)))
                             }
                             Identifier::Mode(_pushed_mode) => flush_with(Some(cloned_ident)),
+                            Identifier::Delimiter => flush_with(None),
                         }
                     }
+                    // If cached identifier is a delimiter
+                    Identifier::Delimiter => flush_with(None),
                 }
             }
         }
     }
 
     pub fn flush(&mut self) {
-        let stored_ident = self.cache.clone().unwrap();
-        self.identifiers.push(stored_ident);
-        self.cache = None;
+        let stored_ident = self.cache.clone();
+        if let Some(ident) = stored_ident {
+            self.identifiers.push(ident);
+            self.cache = None;
+        }
     }
 
     pub fn parse(&self) -> DiceExpr {
@@ -145,6 +154,9 @@ impl ParsedIdentifers {
                     };
                     op = Some(symbol);
                 }
+                Identifier::Delimiter => {
+                    continue;
+                }
             }
         }
         assert_eq!(mode.unwrap_or_default().to_ascii_lowercase(), 'd');
@@ -165,10 +177,9 @@ pub fn parse(expression: &str) -> DiceExpr {
 
     for c in expression.chars() {
         if c == ' ' {
-            continue;
-        }
+            store.push(&Identifier::Delimiter);
         // Handling numbers
-        if c >= '0' && c <= '9' {
+        } else if c >= '0' && c <= '9' {
             let mut s = String::new();
             s.push(c);
             store.push(&Identifier::Number(s));

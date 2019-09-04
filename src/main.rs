@@ -18,6 +18,6 @@ fn main() {
 
     if let Some(input) = matches.value_of("INPUT") {
         let dice_expr = parse(input);
-        println!("{:?}", dice_expr);
+        println!("{}", dice_expr);
     }
 }
