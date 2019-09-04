@@ -18,6 +18,24 @@ impl fmt::Display for Throw {
     }
 }
 
+/// Shuffle several elements
+pub struct Shuffle {
+    elements: Vec<String>,
+}
+
+impl Shuffle {
+    pub fn new(elements: Vec<String>) -> Shuffle {
+        Shuffle { elements }
+    }
+}
+
+impl fmt::Display for Shuffle {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        write!(f, "S {}", self.elements.join(" "))
+    }
+}
+
+/// Comparison operations
 pub enum CompareOp {
     GreaterThan,
     GreaterThanOrEqual,
@@ -83,6 +101,7 @@ impl fmt::Display for ThrowCompare {
 pub enum DiceExpr {
     DiceThrow(Throw),
     DiceThrowCompare(ThrowCompare),
+    ElementsShuffle(Shuffle),
 }
 
 impl fmt::Display for DiceExpr {
@@ -90,6 +109,7 @@ impl fmt::Display for DiceExpr {
         match &self {
             DiceExpr::DiceThrow(throw) => write!(f, "{}", throw),
             DiceExpr::DiceThrowCompare(throw_cmp) => write!(f, "{}", throw_cmp),
+            DiceExpr::ElementsShuffle(shfl) => write!(f, "{}", shfl),
         }
     }
 }
