@@ -4,7 +4,7 @@ use clap::{App, Arg};
 use lib::parse::parse;
 use std::io;
 
-const VERSION: &str = "v0.0.1";
+const VERSION: &str = "v0.1.0";
 const APPNAME: &str = "rustdice";
 const AUTHOR: &str = "Zhenhui Xie <xiezh0831@yahoo.co.jp>";
 const ABOUT: &str = "Dice program written in rust";

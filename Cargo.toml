@@ -1,10 +1,17 @@
 [package]
 name = "rustdice"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["heyrict <xiezh0831@126.com>"]
 edition = "2018"
 
+description = "A toy script generate dice-like result"
+license = "UNLICENSE"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[profile.release]
+opt-level = 'z'
+lto = true
 
 [dependencies]
 clap = "~2.33.0"
