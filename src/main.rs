@@ -30,6 +30,9 @@ fn main() {
                     if bytes == 0 {
                         break;
                     }
+                    if input.trim() == "" {
+                        continue;
+                    }
                     let dice_expr = parse(&input.trim_end());
                     println!("> {}", dice_expr);
                     println!("Result: {}", dice_expr.go());

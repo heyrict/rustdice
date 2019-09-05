@@ -41,3 +41,22 @@ There are three modes that `<INPUT>` support.
   Usage: S [valueA [valueB [...]]]
   - S A B C: Shuffle list [A, B, C]
   ```
+
+## Examples
+```
+3d6
+> 3D6
+Result: 5 2 5
+
+d
+> 1D6
+Result: 2
+
+6d > 3
+> 6D6>3
+Result: 6 1 5 1 5 2 > 3: Pass 3 of 6
+
+s Tom and Jerry
+> S Tom and Jerry
+Result: Jerry and Tom
+```
