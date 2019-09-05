@@ -164,13 +164,13 @@ impl GoDice<Vec<i32>> for ThrowCompare {
 ///
 /// - DiceThrow: just throw a dice
 ///
-///   Usage: ([times])D([faces])
+///   Usage: [times]D[faces]
 ///   - 3D6: Throw a dice with 6 faces 3 times
 ///   - D: Throw a dice with 6 faces 1 time
 ///
 /// - DiceThrowCompare: throw a dice and compare with a number
 ///
-///   Usage: ([times])D([faces])[=|<|<=|>|>=|!=|<>][number]
+///   Usage: [times]D[faces][=|<|<=|>|>=|!=|<>][number]
 ///   - 3D6 > 4: Throw a dice with 6 faces and compare with 4, repeat 3 times
 ///
 /// - Shuffle: shuffle a list
